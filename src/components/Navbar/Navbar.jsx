@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Navbar.scss";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCategory } from "../../store/slices/categorySlice";
 import { getCategories } from "../../services/product";
+import { openCart } from "../../store/slices/modalSlice";
 
 function Navbar() {
   const dispatch = useDispatch();
   const selected = useSelector((state) => state.category.selectedCategory);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const profileRef = useRef();
+
+  const cartItems = useSelector(state => state.cart.items);
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -46,14 +53,37 @@ function Navbar() {
     dispatch(setCategory(categorySlug));
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if(
+        profileRef.current &&
+        !profileRef.current.contains(event.target)
+      ) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    if(isProfileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+  }, [isProfileOpen]);
+
   if (loading) {
     return (
       <div className="navbar loading-navbar">
-        <div className="right-section">
+        <div className="left-section">
           <div className="skeleton skeleton-logo" />
           <div className="skeleton skeleton-link" />
           <div className="skeleton skeleton-link" />
           <div className="skeleton skeleton-link" />
+        </div>
+        <div className="right-section">
+          <div className="skeleton skeleton-logo" />
         </div>
       </div>
     );
@@ -61,7 +91,7 @@ function Navbar() {
 
   return (
     <div className="navbar">
-      <div className="right-section">
+      <div className="left-section">
         <NavLink to="/" className="logo-text">
           Shopi
         </NavLink>
@@ -79,9 +109,7 @@ function Navbar() {
             key={category.slug}
             to={`/${category.slug}`}
             onClick={() => handleClick(category.slug)}
-            className={`category-text ${
-              selected === category.slug ? "active" : ""
-            }`}
+            className={`category-text ${selected === category.slug ? "active" : ""}`}
           >
             {category.name}
             {selected === category.slug && <span className="underline" />}
@@ -97,9 +125,7 @@ function Navbar() {
                   key={category.slug}
                   to={`/${category.slug}`}
                   onClick={() => handleClick(category.slug)}
-                  className={`dropdown-item ${
-                    selected === category.slug ? "active" : ""
-                  }`}
+                  className={`dropdown-item ${selected === category.slug ? "active" : ""}`}
                 >
                   {category.name}
                   {selected === category.slug && <span className="underline" />}
@@ -110,7 +136,26 @@ function Navbar() {
         )}
       </div>
 
+      <div className="mobile-profile" ref={profileRef} onClick={() => setIsProfileOpen(prev => !prev)}>
+            <img src="/profile.png" alt="user" />
+
+            {
+              isProfileOpen && (
+                <div className="mobile-dropdown">
+            <p className="username">Name</p>
+            <NavLink to="/orders" className="navlink">My Orders</NavLink>
+            <NavLink to="/account" className="navlink">My Account</NavLink>
+            <div className="cart-icon" onClick={() => dispatch(openCart())}>
+              <img src="/cart.png" alt="cart" />
+              {totalItems}
+            </div>
+          </div>
+              )
+            }
+        </div>
+
       <div className="right-section">
+
         <p className="username">Name</p>
 
         <NavLink
@@ -133,8 +178,9 @@ function Navbar() {
           {selected === "account" && <span className="underline" />}
         </NavLink>
 
-        <div className="cart-icon">
+        <div className="cart-icon" onClick={() => dispatch(openCart())}>
           <img src="/cart.png" alt="cart" />
+          {totalItems}
         </div>
       </div>
     </div>

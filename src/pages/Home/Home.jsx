@@ -11,6 +11,7 @@ function Home() {
       <div className="products">
         <Outlet />
       </div>
+
     </div>
   );
 }
