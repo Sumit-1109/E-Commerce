@@ -1,0 +1,55 @@
+.account-wrapper {
+    max-width: 360px;
+    margin-inline: auto;
+    padding-top: 13vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  
+    .account-title {
+      text-align: center;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #111;
+    }
+  
+    .info-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+  
+      .info-label {
+        font-size: 0.9rem;
+        color: #888;
+        font-weight: 500;
+      }
+  
+      .info-value {
+        font-size: 1.05rem;
+        font-weight: 500;
+        color: #333;
+      }
+    }
+  
+    .logout-btn {
+      margin-top: 2rem;
+      background-color: #111;
+      color: white;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+  
+      &:hover {
+        background-color: #333;
+      }
+    }
+  }  

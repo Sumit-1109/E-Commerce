@@ -1,6 +1,92 @@
 .products-section {
   padding: 12vh;
   z-index: 1;
+  animation: slideInTop 0.6s ease-out both;
+
+  .search-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 2rem 0;
+    align-items: center;
+  
+    input[type="text"],
+    select {
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  
+    .price-filter {
+      display: flex;
+      gap: 0.5rem;
+  
+      label {
+        font-size: 0.85rem;
+        input {
+          margin-left: 0.25rem;
+          padding: 0.3rem;
+          width: 70px;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+        }
+      }
+    }
+  }
+  
+  .products-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+  
+  .product-card {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    text-align: center;
+    background-color: #fff;
+  
+    .add-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+  
+      &.added {
+        background-color: green;
+      }
+    }
+  
+    .product-img {
+      height: 150px;
+      width: 100%;
+      object-fit: contain;
+    }
+  
+    .product-info {
+      margin-top: 1rem;
+      .product-title {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+  
+      .product-price {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+      }
+    }
+  }
+  
 
   .search-bar {
     margin-top: 3%;
@@ -108,4 +194,19 @@
     text-align: center;
     margin-top: 4rem;
   }
+}
+
+@keyframes slideInTop {
+  0% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-top {
+  animation: slideInTop 0.5s ease-out;
 }

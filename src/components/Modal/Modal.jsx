@@ -2,13 +2,22 @@ import React from 'react'
 import "./Modal.scss";
 import { useDispatch, useSelector } from 'react-redux'
 import { closeCart, closeProductDetail } from '../../store/slices/modalSlice';
-import { addToCart, updateQuantity, removeFromCart } from '../../store/slices/cartSlice';
+import { addToCart, updateQuantity, removeFromCart, clearCart } from '../../store/slices/cartSlice';
+import { addOrder } from '../../store/slices/orderslice';
+import { useNavigate } from 'react-router-dom';
 
 function Modal() {
 
     const dispatch = useDispatch();
     const { cartOpen, productDetail = {} } = useSelector((state) => state.modal);
     const cartItems = useSelector((state) => state.cart.items);
+    const totalPrice = cartItems.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0
+    );
+
+    const navigate = useNavigate();
+    const orders = useSelector((state) => state.orders.list);
 
     if (!cartOpen && (!productDetail || !productDetail.open)) return null;
 
@@ -16,6 +25,24 @@ function Modal() {
         dispatch(closeCart());
         dispatch(closeProductDetail());
     };
+
+    const handleCheckOut = () => {
+        if(cartItems.length === 0) return;
+
+        const newOrder = {
+            id : Date.now(),
+            items : cartItems,
+            total : totalPrice,
+            date : new Date().toLocaleString(),
+        };
+
+        const newOrderIndex = orders.length;
+
+        dispatch(addOrder(newOrder));
+        dispatch(clearCart());
+        closeAll();
+        navigate(`/home/my-orders/${newOrderIndex}`)
+    }
 
   return (
     <div className='modal-overlay' onClick={closeAll}>
@@ -25,6 +52,8 @@ function Modal() {
         cartOpen && (
             <div className='cart-modal'>
                 <h2>My order</h2>
+                
+                <div className="cart-items">
                 {
                     cartItems.length  > 0 && (
                         cartItems.map((item) => (
@@ -49,6 +78,17 @@ function Modal() {
                         ))
                     )
                 }
+                </div>
+
+                <div className="checkout">
+                    
+                    <div className="amount">
+                    <p>Total : </p>
+                    <p>{totalPrice.toFixed(2)}</p>
+                    </div>
+
+                    <button onClick={handleCheckOut}>Checkout</button>
+                </div>
             </div>
         )
     }
